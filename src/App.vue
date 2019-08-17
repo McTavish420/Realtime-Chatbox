@@ -1,6 +1,14 @@
 <template>
   <div id="app">
     <router-view />
+    <footer class="navbar-default navbar-bottom navbar-dark bg-dark fixed-bottom">
+        <div class="container-fluid">
+           <p class="text-center nav-bar mb-0">Checkout repository at <a href="https://github.com/McTavish420/chatbox" target="_blank">
+             https://github.com/McTavish420/chatbox
+        </a></p>
+       </div>
+   </footer>
+
   </div>
 </template>
 
@@ -23,5 +31,8 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+footer {
+  color: white;
 }
 </style>
