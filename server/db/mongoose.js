@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const dbURL = 'localhost:27017/Chatbox';
 
-mongoose.connect(process.env.MONGODB_URI || `mongodb+srv://MacTavish:TUSAR@142442@devcluster-cybti.mongodb.net/DataEntry?retryWrites=true`, {
+mongoose.connect(process.env.MONGODB_URI || `mongodb+srv://MacTavish:TUSAR@142442@devcluster-cybti.mongodb.net/Chatbox?retryWrites=true`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useMongoClient: true
