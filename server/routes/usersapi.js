@@ -2,12 +2,13 @@ const express = require('express');
 const _ = require('lodash');
 const {User} = require('../models/user');
 const {authenticate} = require('../middleware/authentication');
-
+const { ObjectID } = require('mongodb');
 const router = express.Router();
 
 // create a user
 router.post('/create', (req, res) => {
-    let body = _.pick(req.body, ['email', 'password', 'username']);
+    let body = _.pick(req.body, ['email', 'password', 'username', 'role']);
+    console.log(body)
     let user = new User(body);
     user.save().then(() => {
         return user.generateAuthToken();
@@ -35,27 +36,6 @@ router.post('/login', (req, res) => {
     });
 });
 
-// getting an user for checking purpose
-
-// router.post('/room', (req, res) => {
-//     console.log(`Sucessfully finds the user: `);
-//     console.log(req.body.username);
-//     console.log(req.body);
-//     let body = _.pick(req.body, ['name', '_id', 'username']);
-//     let newRoom = new Room();
-//     newRoom.name = body.name;
-//     newRoom.admin["adminUserID"] = body._id;
-//     newRoom.admin["adminUser"] = body.username;
-//     console.log(newRoom);
-//     newRoom.save().then((res) => {
-//         return newRoom.addMember(body._id, body.username);
-//     }).then(() => {
-//         res.send(`Successfully created a room named as: ${newRoom.name}`);
-//     }).catch((err) => {
-//         console.log(err);
-//     });
-// });
-
 
 // logging out an user 
 
@@ -71,8 +51,67 @@ router.delete('/logout', authenticate, (req, res) => {
     });
 });
 
+// getting a certain user
+router.get('/:id', (req, res) => {
+    // console.log('line 56', req.params)
+    let id = req.params.id
+    // console.log(id)
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+    User.findById(id).then((doc) => {
+        if (!doc) {
+            res.status(404).send()
+        }
+        res.send(doc)
+    }).catch((err) => {
+        res.status(400).send(err)
+    });
+})
 
+// update a userinfo
+router.patch('/:id', (req, res) => {
+    let id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+    let updateObject = req.body;
 
+    User.findByIdAndUpdate(id, { $set: updateObject }).then((info) => {
+        if (!info) {
+            return res.status(404).send();
+        }
+        res.send(info);
+    }).catch((e) => {
+        res.status(400).send();
+    });
+});
+
+// get all users
+router.get('/', (req, res) => {
+    User.find().then((docs) => {
+        res.send(docs);
+    }, (err) => {
+        res.status(400).send(err);
+    });
+});
+
+// delete a user
+router.delete('/:id', (req, res) => {
+    let id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    User.findByIdAndRemove(id).then((info) => {
+        if (!info) {
+            return res.status(404).send();
+        }
+        res.send(info);
+    }).catch((e) => {
+        res.status(400).send();
+    });
+});
 
 
 

@@ -37,7 +37,14 @@ let UserSchema = new mongoose.Schema({
             type: String,
             require: true
         }
-    }]
+    }],
+    role: {
+        type: String,
+        trim: true,
+        required: true,
+        enum: ['admin', 'user'],
+        default: 'user'
+    }
 
 });
 
@@ -46,7 +53,7 @@ let UserSchema = new mongoose.Schema({
 UserSchema.methods.toJSON = function () {
   let user = this;
   let userObject = user.toObject();
-  return _.pick(userObject, ['_id', 'email', 'username']);  
+  return _.pick(userObject, ['_id', 'email', 'username', 'role']);  
 };
 
 UserSchema.methods.generateAuthToken = function () {
